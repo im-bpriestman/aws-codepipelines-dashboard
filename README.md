@@ -9,41 +9,41 @@ running the spring boot app must have network access to AWS.
 
 You can also run the application on your local computer. For example 
 by running `mvn spring-boot:run` from the command line. There is also
-a Dockerfile included to run the application in the cloud.
+docker files included to run the application in a container.
 
-## Getting started with Docker
+## Authenticating to AWS
+
+In order to allow the application to access AWS pipelines, you'll need to populate the following environment variables in your shell:
+
+* AWS_ACCESS_KEY_ID
+* AWS_SECRET_ACCESS_KEY
+* AWS_REGION
+
+If using STS (recommended), you'll also need to provide a value for
+
+* AWS_SESSION_TOKEN
+
+The easiest way to do this locally, is to use [aws-vault](https://github.com/99designs/aws-vault) and configure a profile, which can access your pipelines.
+
+## Getting started with Docker Compose
+
 With the following command, you can run this application in a docker container:
-```
-docker run -p8080:8080 -v`echo $HOME/.aws`:/home/app/.aws:ro --name dashboard  codecentric/aws-codepipelines-dashboard
-```
-After start, you can reach the application via
-```http://localhost:8080/```
-
-This configuration assumes that you've already an AWS account with a running
-AWS CLI on your development host.
-
-## Instructions for setting up AWS
-
-You have to give/ensure the user mentioned in $HOME/.aws/credentials
-a policy. The steps are:
-
-1) choose IAM
-1) use "Policies" in navigation
-1) search for "AWSCodePipelineFullAccess"
-1) select Attach entities, select "Attach"
-1) get your user
-1) click "Attach policy"
-
-Check policies with this CLI command:
 
 ```
-aws iam list-attached-user-policies --user-name <USERNAME>
+aws-vault exec <profile> -- docker-compose up -d
 ```
 
-Verify that the following entry is listed:
+This will start our application on a random port.
+You can discover what this port is with
+
 ```
-{
-    "PolicyName": "AWSCodePipelineFullAccess", 
-    "PolicyArn": "arn:aws:iam::aws:policy/AWSCodePipelineFullAccess"
-}
+docker-compose port awscodepipelinesdashboard 8080
 ```
+
+You can then access your dashboard on
+
+```
+http://localhost:<port>/
+```
+
+If you want to specify a fixed port to use each time, copy [/.env.example](/.env.example) to `/.env` and adjust the value of `AWSCODEPIPELINES_PORT` to meet your requirements.
