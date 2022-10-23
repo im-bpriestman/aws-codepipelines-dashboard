@@ -5,7 +5,7 @@ COPY . .
 RUN cd /tmp/build-dir && mvn package
 
 ### Production stage
-FROM eclipse-temurin:8-jre
+FROM eclipse-temurin:8-jre-alpine
 RUN groupadd -r app && useradd --no-log-init -r -g app app
 WORKDIR /home/app
 COPY --from=builder /tmp/build-dir/container_start.sh /app/container_start.sh
