@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  awscodepipelinesdashboard:
+    image: awscodepipelinesdashboard
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - 8080:8080
+    environment:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_SESSION_TOKEN
+      - AWS_REGION
